@@ -1,3 +1,5 @@
+ant was here :)
+
 # Burstcoin
 
 The world's first HDD-mined cryptocurrency using the new algorithm, Proof-of-Capacity.
