@@ -78,6 +78,8 @@ https://bitcointalk.org/index.php?topic=731923 *(Original unmoderated)*
 ### Related repositories
 https://github.com/BurstProject *Original/Forked Burstcoin, ATDebugger, ATAssembler, POCMiner (Proof of concept plotter/miner), etc.*
 
+https://github.com/SOELexicon *Updated Pool Code*
+
 https://github.com/IceBurst/Burst *Burst for Android*
 
 https://github.com/dawallet/ *Burstcoin Win Client, Android App*
@@ -98,7 +100,7 @@ https://github.com/Kurairaito *Burst Plot Generator by Kurairaito*
 
 https://github.com/Mirkic7 *Improved Linux Burst Plotter / optimizer / miner (linux)*
 
-https://github.com/uraymeiviar *C Miner, Pool, Block Explorer, Plot Composer (linux)*
+https://github.com/uraymeiviar *C Miner, Block Explorer, Plot Composer (linux)*
 
 https://github.com/mrpsion/burst-mining-system *Web interface for Plotting and Mining*
 
