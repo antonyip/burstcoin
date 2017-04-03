@@ -12,3 +12,5 @@ Usage:
 Run run.sh or run.bat to start the server. The interface is accessed through a web browser on port 8125. ex: http://127.0.0.1:8125 or http://localhost:8125
 
 Pick a long passphrase, as it is the only thing needed to access your account.
+
+Lexicon Was Here 2017
