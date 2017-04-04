@@ -16,93 +16,130 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-public final class Nxt {
+public final class Nxt
+{
 
-    public static final String VERSION = "1.2.8";
-    public static final String APPLICATION = "NRS";
+    public static final String VERSION = "A.1.0.0";
+    public static final String APPLICATION = "BURST";
 
     private static volatile Time time = new Time.EpochTime();
 
     private static final Properties defaultProperties = new Properties();
-    static {
+    static
+    {
         System.out.println("Initializing Burst server version " + Nxt.VERSION);
-        try (InputStream is = ClassLoader.getSystemResourceAsStream("nxt-default.properties")) {
-            if (is != null) {
+        try (InputStream is = ClassLoader.getSystemResourceAsStream("nxt-default.properties"))
+        {
+            if (is != null)
+            {
                 Nxt.defaultProperties.load(is);
-            } else {
+            }
+            else
+            {
                 String configFile = System.getProperty("nxt-default.properties");
-                if (configFile != null) {
-                    try (InputStream fis = new FileInputStream(configFile)) {
+                if (configFile != null)
+                {
+                    try (InputStream fis = new FileInputStream(configFile))
+                    {
                         Nxt.defaultProperties.load(fis);
-                    } catch (IOException e) {
+                    }
+                    catch (IOException e)
+                    {
                         throw new RuntimeException("Error loading nxt-default.properties from " + configFile);
                     }
-                } else {
-                    throw new RuntimeException("nxt-default.properties not in classpath and system property nxt-default.properties not defined either");
+                }
+                else
+                {
+                    throw new RuntimeException(
+                            "nxt-default.properties not in classpath and system property nxt-default.properties not defined either");
                 }
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             throw new RuntimeException("Error loading nxt-default.properties", e);
         }
     }
     private static final Properties properties = new Properties(defaultProperties);
-    static {
-        try (InputStream is = ClassLoader.getSystemResourceAsStream("nxt.properties")) {
-            if (is != null) {
+    static
+    {
+        try (InputStream is = ClassLoader.getSystemResourceAsStream("nxt.properties"))
+        {
+            if (is != null)
+            {
                 Nxt.properties.load(is);
             } // ignore if missing
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             throw new RuntimeException("Error loading nxt.properties", e);
         }
     }
 
-    public static int getIntProperty(String name) {
-        try {
+    public static int getIntProperty(String name)
+    {
+        try
+        {
             int result = Integer.parseInt(properties.getProperty(name));
             Logger.logMessage(name + " = \"" + result + "\"");
             return result;
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e)
+        {
             Logger.logMessage(name + " not defined, assuming 0");
             return 0;
         }
     }
 
-    public static String getStringProperty(String name) {
+    public static String getStringProperty(String name)
+    {
         return getStringProperty(name, null);
     }
 
-    public static String getStringProperty(String name, String defaultValue) {
+    public static String getStringProperty(String name, String defaultValue)
+    {
         String value = properties.getProperty(name);
-        if (value != null && ! "".equals(value)) {
+        if (value != null && !"".equals(value))
+        {
             Logger.logMessage(name + " = \"" + value + "\"");
             return value;
-        } else {
+        }
+        else
+        {
             Logger.logMessage(name + " not defined");
             return defaultValue;
         }
     }
 
-    public static List<String> getStringListProperty(String name) {
+    public static List<String> getStringListProperty(String name)
+    {
         String value = getStringProperty(name);
-        if (value == null || value.length() == 0) {
+        if (value == null || value.length() == 0)
+        {
             return Collections.emptyList();
         }
         List<String> result = new ArrayList<>();
-        for (String s : value.split(";")) {
+        for (String s : value.split(";"))
+        {
             s = s.trim();
-            if (s.length() > 0) {
+            if (s.length() > 0)
+            {
                 result.add(s);
             }
         }
         return result;
     }
 
-    public static Boolean getBooleanProperty(String name) {
+    public static Boolean getBooleanProperty(String name)
+    {
         String value = properties.getProperty(name);
-        if (Boolean.TRUE.toString().equals(value)) {
+        if (Boolean.TRUE.toString().equals(value))
+        {
             Logger.logMessage(name + " = \"true\"");
             return true;
-        } else if (Boolean.FALSE.toString().equals(value)) {
+        }
+        else if (Boolean.FALSE.toString().equals(value))
+        {
             Logger.logMessage(name + " = \"false\"");
             return false;
         }
@@ -110,12 +147,16 @@ public final class Nxt {
         return false;
     }
 
-    public static Boolean getBooleanProperty(String name, boolean assume) {
+    public static Boolean getBooleanProperty(String name, boolean assume)
+    {
         String value = properties.getProperty(name);
-        if (Boolean.TRUE.toString().equals(value)) {
+        if (Boolean.TRUE.toString().equals(value))
+        {
             Logger.logMessage(name + " = \"true\"");
             return true;
-        } else if (Boolean.FALSE.toString().equals(value)) {
+        }
+        else if (Boolean.FALSE.toString().equals(value))
+        {
             Logger.logMessage(name + " = \"false\"");
             return false;
         }
@@ -123,71 +164,90 @@ public final class Nxt {
         return assume;
     }
 
-    public static Blockchain getBlockchain() {
+    public static Blockchain getBlockchain()
+    {
         return BlockchainImpl.getInstance();
     }
 
-    public static BlockchainProcessor getBlockchainProcessor() {
+    public static BlockchainProcessor getBlockchainProcessor()
+    {
         return BlockchainProcessorImpl.getInstance();
     }
 
-    public static TransactionProcessor getTransactionProcessor() {
+    public static TransactionProcessor getTransactionProcessor()
+    {
         return TransactionProcessorImpl.getInstance();
     }
 
     private static Generator generator = new GeneratorImpl();
-    public static Generator getGenerator() {
+
+    public static Generator getGenerator()
+    {
         return generator;
     }
-    public static void setGenerator(Generator newGenerator) {
+
+    public static void setGenerator(Generator newGenerator)
+    {
         generator = newGenerator;
     }
 
-    public static int getEpochTime() {
+    public static int getEpochTime()
+    {
         return time.getTime();
     }
 
-    static void setTime(Time time) {
+    static void setTime(Time time)
+    {
         Nxt.time = time;
     }
 
-    public static void main(String[] args) {
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+    public static void main(String[] args)
+    {
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 Nxt.shutdown();
             }
         }));
         init();
     }
 
-    public static void init(Properties customProperties) {
+    public static void init(Properties customProperties)
+    {
         properties.putAll(customProperties);
         init();
     }
 
-    public static void init() {
+    public static void init()
+    {
         Init.init();
     }
 
-    public static void shutdown() {
+    public static void shutdown()
+    {
         Logger.logShutdownMessage("Shutting down...");
         API.shutdown();
         Users.shutdown();
         Peers.shutdown();
         ThreadPool.shutdown();
         Db.shutdown();
-        if(BlockchainProcessorImpl.oclVerify) {
+        if (BlockchainProcessorImpl.oclVerify)
+        {
             OCLPoC.destroy();
         }
         Logger.logShutdownMessage("Burst server " + VERSION + " stopped.");
         Logger.shutdown();
     }
 
-    private static class Init {
+    private static class Init
+    {
 
-        static {
-            try {
+        static
+        {
+            try
+            {
                 long startTime = System.currentTimeMillis();
                 Logger.init();
                 Db.init();
@@ -210,43 +270,60 @@ public final class Nxt {
                 API.init();
                 Users.init();
                 DebugTrace.init();
-                int timeMultiplier = (Constants.isTestnet && Constants.isOffline) ? Math.max(Nxt.getIntProperty("nxt.timeMultiplier"), 1) : 1;
+                int timeMultiplier = (Constants.isTestnet && Constants.isOffline)
+                        ? Math.max(Nxt.getIntProperty("nxt.timeMultiplier"), 1) : 1;
                 ThreadPool.start(timeMultiplier);
-                if (timeMultiplier > 1) {
-                    setTime(new Time.FasterTime(Math.max(getEpochTime(), Nxt.getBlockchain().getLastBlock().getTimestamp()), timeMultiplier));
+                if (timeMultiplier > 1)
+                {
+                    setTime(new Time.FasterTime(
+                            Math.max(getEpochTime(), Nxt.getBlockchain().getLastBlock().getTimestamp()),
+                            timeMultiplier));
                     Logger.logMessage("TIME WILL FLOW " + timeMultiplier + " TIMES FASTER!");
                 }
 
                 long currentTime = System.currentTimeMillis();
                 Logger.logMessage("Initialization took " + (currentTime - startTime) / 1000 + " seconds");
                 Logger.logMessage("Burst server " + VERSION + " started successfully.");
-                if (Constants.isTestnet) {
+                if (Constants.isTestnet)
+                {
                     Logger.logMessage("RUNNING ON TESTNET - DO NOT USE REAL ACCOUNTS!");
                 }
-                if(Nxt.getBooleanProperty("burst.mockMining")) {
+                if (Nxt.getBooleanProperty("burst.mockMining"))
+                {
                     setGenerator(new GeneratorImpl.MockGeneratorImpl());
                 }
-                if(BlockchainProcessorImpl.oclVerify) {
-                    try {
+                if (BlockchainProcessorImpl.oclVerify)
+                {
+                    try
+                    {
                         OCLPoC.init();
                     }
-                    catch(OCLPoC.OCLCheckerException e) {
+                    catch (OCLPoC.OCLCheckerException e)
+                    {
                         Logger.logErrorMessage("Error initializing OpenCL, disabling ocl verify: " + e.getMessage());
                         BlockchainProcessorImpl.oclVerify = false;
                     }
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Logger.logErrorMessage(e.getMessage(), e);
                 System.exit(1);
             }
         }
 
-        private static void init() {}
+        private static void init()
+        {
+        }
 
-        private Init() {} // never
+        private Init()
+        {
+        } // never
 
     }
 
-    private Nxt() {} // never
+    private Nxt()
+    {
+    } // never
 
 }
