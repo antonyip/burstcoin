@@ -8,29 +8,36 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-final class GetMilestoneBlockIds extends PeerServlet.PeerRequestHandler {
+final class GetMilestoneBlockIds extends PeerServlet.PeerRequestHandler
+{
 
     static final GetMilestoneBlockIds instance = new GetMilestoneBlockIds();
 
-    private GetMilestoneBlockIds() {}
-
+    private GetMilestoneBlockIds()
+    {
+    }
 
     @Override
-    JSONStreamAware processRequest(JSONObject request, Peer peer) {
+    JSONStreamAware processRequest(JSONObject request, Peer peer)
+    {
 
         JSONObject response = new JSONObject();
-        try {
+        try
+        {
 
             JSONArray milestoneBlockIds = new JSONArray();
 
             String lastBlockIdString = (String) request.get("lastBlockId");
-            if (lastBlockIdString != null) {
+            if (lastBlockIdString != null)
+            {
                 long lastBlockId = Convert.parseUnsignedLong(lastBlockIdString);
                 long myLastBlockId = Nxt.getBlockchain().getLastBlock().getId();
-                if (myLastBlockId == lastBlockId || Nxt.getBlockchain().hasBlock(lastBlockId)) {
+                if (myLastBlockId == lastBlockId || Nxt.getBlockchain().hasBlock(lastBlockId))
+                {
                     milestoneBlockIds.add(lastBlockIdString);
                     response.put("milestoneBlockIds", milestoneBlockIds);
-                    if (myLastBlockId == lastBlockId) {
+                    if (myLastBlockId == lastBlockId)
+                    {
                         response.put("last", Boolean.TRUE);
                     }
                     return response;
@@ -43,32 +50,42 @@ final class GetMilestoneBlockIds extends PeerServlet.PeerRequestHandler {
             int limit = 10;
             int blockchainHeight = Nxt.getBlockchain().getHeight();
             String lastMilestoneBlockIdString = (String) request.get("lastMilestoneBlockId");
-            if (lastMilestoneBlockIdString != null) {
-                Block lastMilestoneBlock = Nxt.getBlockchain().getBlock(Convert.parseUnsignedLong(lastMilestoneBlockIdString));
-                if (lastMilestoneBlock == null) {
+            if (lastMilestoneBlockIdString != null)
+            {
+                Block lastMilestoneBlock = Nxt.getBlockchain()
+                        .getBlock(Convert.parseUnsignedLong(lastMilestoneBlockIdString));
+                if (lastMilestoneBlock == null)
+                {
                     throw new IllegalStateException("Don't have block " + lastMilestoneBlockIdString);
                 }
                 height = lastMilestoneBlock.getHeight();
                 jump = Math.min(1440, Math.max(blockchainHeight - height, 1));
                 height = Math.max(height - jump, 0);
-            } else if (lastBlockIdString != null) {
+            }
+            else if (lastBlockIdString != null)
+            {
                 height = blockchainHeight;
                 jump = 10;
-            } else {
+            }
+            else
+            {
                 peer.blacklist();
                 response.put("error", "Old getMilestoneBlockIds protocol not supported, please upgrade");
                 return response;
             }
             blockId = Nxt.getBlockchain().getBlockIdAtHeight(height);
 
-            while (height > 0 && limit-- > 0) {
+            while (height > 0 && limit-- > 0)
+            {
                 milestoneBlockIds.add(Convert.toUnsignedLong(blockId));
                 blockId = Nxt.getBlockchain().getBlockIdAtHeight(height);
                 height = height - jump;
             }
             response.put("milestoneBlockIds", milestoneBlockIds);
 
-        } catch (RuntimeException e) {
+        }
+        catch (RuntimeException e)
+        {
             Logger.logDebugMessage(e.toString());
             response.put("error", e.toString());
         }

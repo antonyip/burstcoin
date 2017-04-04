@@ -9,27 +9,33 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class Hallmark {
+public final class Hallmark
+{
 
-    public static int parseDate(String dateValue) {
-        return Integer.parseInt(dateValue.substring(0, 4)) * 10000
-                + Integer.parseInt(dateValue.substring(5, 7)) * 100
+    public static int parseDate(String dateValue)
+    {
+        return Integer.parseInt(dateValue.substring(0, 4)) * 10000 + Integer.parseInt(dateValue.substring(5, 7)) * 100
                 + Integer.parseInt(dateValue.substring(8, 10));
     }
 
-    public static String formatDate(int date) {
+    public static String formatDate(int date)
+    {
         int year = date / 10000;
         int month = (date % 10000) / 100;
         int day = date % 100;
-        return (year < 10 ? "000" : (year < 100 ? "00" : (year < 1000 ? "0" : ""))) + year + "-" + (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day;
+        return (year < 10 ? "000" : (year < 100 ? "00" : (year < 1000 ? "0" : ""))) + year + "-"
+                + (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day;
     }
 
-    public static String generateHallmark(String secretPhrase, String host, int weight, int date) {
+    public static String generateHallmark(String secretPhrase, String host, int weight, int date)
+    {
 
-        if (host.length() == 0 || host.length() > 100) {
+        if (host.length() == 0 || host.length() > 100)
+        {
             throw new IllegalArgumentException("Hostname length should be between 1 and 100");
         }
-        if (weight <= 0 || weight > Constants.MAX_BALANCE_NXT) {
+        if (weight <= 0 || weight > Constants.MAX_BALANCE_NXT)
+        {
             throw new IllegalArgumentException("Weight should be between 1 and " + Constants.MAX_BALANCE_NXT);
         }
 
@@ -39,7 +45,7 @@ public final class Hallmark {
         ByteBuffer buffer = ByteBuffer.allocate(32 + 2 + hostBytes.length + 4 + 4 + 1);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         buffer.put(publicKey);
-        buffer.putShort((short)hostBytes.length);
+        buffer.putShort((short) hostBytes.length);
         buffer.put(hostBytes);
         buffer.putInt(weight);
         buffer.putInt(date);
@@ -52,7 +58,8 @@ public final class Hallmark {
 
     }
 
-    public static Hallmark parseHallmark(String hallmarkString) {
+    public static Hallmark parseHallmark(String hallmarkString)
+    {
 
         byte[] hallmarkBytes = Convert.parseHexString(hallmarkString);
 
@@ -62,7 +69,8 @@ public final class Hallmark {
         byte[] publicKey = new byte[32];
         buffer.get(publicKey);
         int hostLength = buffer.getShort();
-        if (hostLength > 300) {
+        if (hostLength > 300)
+        {
             throw new IllegalArgumentException("Invalid host length");
         }
         byte[] hostBytes = new byte[hostLength];
@@ -93,7 +101,9 @@ public final class Hallmark {
     private final byte[] signature;
     private final boolean isValid;
 
-    private Hallmark(String hallmarkString, byte[] publicKey, byte[] signature, String host, int weight, int date, boolean isValid) {
+    private Hallmark(String hallmarkString, byte[] publicKey, byte[] signature, String host, int weight, int date,
+            boolean isValid)
+    {
         this.hallmarkString = hallmarkString;
         this.host = host;
         this.publicKey = publicKey;
@@ -104,35 +114,43 @@ public final class Hallmark {
         this.isValid = isValid;
     }
 
-    public String getHallmarkString() {
+    public String getHallmarkString()
+    {
         return hallmarkString;
     }
 
-    public String getHost() {
+    public String getHost()
+    {
         return host;
     }
 
-    public int getWeight() {
+    public int getWeight()
+    {
         return weight;
     }
 
-    public int getDate() {
+    public int getDate()
+    {
         return date;
     }
 
-    public byte[] getSignature() {
+    public byte[] getSignature()
+    {
         return signature;
     }
 
-    public byte[] getPublicKey() {
+    public byte[] getPublicKey()
+    {
         return publicKey;
     }
 
-    public long getAccountId() {
+    public long getAccountId()
+    {
         return accountId;
     }
 
-    public boolean isValid() {
+    public boolean isValid()
+    {
         return isValid;
     }
 

@@ -24,16 +24,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class PeerServlet extends HttpServlet {
+public final class PeerServlet extends HttpServlet
+{
 
-    abstract static class PeerRequestHandler {
+    abstract static class PeerRequestHandler
+    {
         abstract JSONStreamAware processRequest(JSONObject request, Peer peer);
     }
 
-    private static final Map<String,PeerRequestHandler> peerRequestHandlers;
+    private static final Map<String, PeerRequestHandler> peerRequestHandlers;
 
-    static {
-        Map<String,PeerRequestHandler> map = new HashMap<>();
+    static
+    {
+        Map<String, PeerRequestHandler> map = new HashMap<>();
         map.put("addPeers", AddPeers.instance);
         map.put("getCumulativeDifficulty", GetCumulativeDifficulty.instance);
         map.put("getInfo", GetInfo.instance);
@@ -50,14 +53,16 @@ public final class PeerServlet extends HttpServlet {
     }
 
     private static final JSONStreamAware UNSUPPORTED_REQUEST_TYPE;
-    static {
+    static
+    {
         JSONObject response = new JSONObject();
         response.put("error", "Unsupported request type!");
         UNSUPPORTED_REQUEST_TYPE = JSON.prepare(response);
     }
 
     private static final JSONStreamAware UNSUPPORTED_PROTOCOL;
-    static {
+    static
+    {
         JSONObject response = new JSONObject();
         response.put("error", "Unsupported protocol!");
         UNSUPPORTED_PROTOCOL = JSON.prepare(response);
@@ -66,60 +71,78 @@ public final class PeerServlet extends HttpServlet {
     private boolean isGzipEnabled;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) throws ServletException
+    {
         super.init(config);
         isGzipEnabled = Boolean.parseBoolean(config.getInitParameter("isGzipEnabled"));
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+    {
 
         PeerImpl peer = null;
         JSONStreamAware response;
 
-        try {
+        try
+        {
             peer = Peers.addPeer(req.getRemoteAddr(), null);
-            if (peer == null) {
+            if (peer == null)
+            {
                 return;
             }
-            if (peer.isBlacklisted()) {
+            if (peer.isBlacklisted())
+            {
                 return;
             }
 
             JSONObject request;
             CountingInputStream cis = new CountingInputStream(req.getInputStream());
-            try (Reader reader = new InputStreamReader(cis, "UTF-8")) {
+            try (Reader reader = new InputStreamReader(cis, "UTF-8"))
+            {
                 request = (JSONObject) JSONValue.parse(reader);
             }
-            if (request == null) {
+            if (request == null)
+            {
                 return;
             }
 
-            if (peer.getState() == Peer.State.DISCONNECTED) {
+            if (peer.getState() == Peer.State.DISCONNECTED)
+            {
                 peer.setState(Peer.State.CONNECTED);
-                if (peer.getAnnouncedAddress() != null) {
+                if (peer.getAnnouncedAddress() != null)
+                {
                     Peers.updateAddress(peer);
                 }
             }
             peer.updateDownloadedVolume(cis.getCount());
-            if (! peer.analyzeHallmark(peer.getPeerAddress(), (String)request.get("hallmark"))) {
+            if (!peer.analyzeHallmark(peer.getPeerAddress(), (String) request.get("hallmark")))
+            {
                 peer.blacklist();
                 return;
             }
 
-            if (request.get("protocol") != null && ((String)request.get("protocol")).equals("B1")) {
+            if (request.get("protocol") != null && ((String) request.get("protocol")).equals("B1"))
+            {
                 PeerRequestHandler peerRequestHandler = peerRequestHandlers.get(request.get("requestType"));
-                if (peerRequestHandler != null) {
+                if (peerRequestHandler != null)
+                {
                     response = peerRequestHandler.processRequest(request, peer);
-                } else {
+                }
+                else
+                {
                     response = UNSUPPORTED_REQUEST_TYPE;
                 }
-            } else {
+            }
+            else
+            {
                 Logger.logDebugMessage("Unsupported protocol " + request.get("protocol"));
                 response = UNSUPPORTED_PROTOCOL;
             }
 
-        } catch (RuntimeException e) {
+        }
+        catch (RuntimeException e)
+        {
             Logger.logDebugMessage("Error processing POST request", e);
             JSONObject json = new JSONObject();
             json.put("error", e.toString());
@@ -127,25 +150,35 @@ public final class PeerServlet extends HttpServlet {
         }
 
         resp.setContentType("text/plain; charset=UTF-8");
-        try {
+        try
+        {
             long byteCount;
-            if (isGzipEnabled) {
-                try (Writer writer = new OutputStreamWriter(resp.getOutputStream(), "UTF-8")) {
+            if (isGzipEnabled)
+            {
+                try (Writer writer = new OutputStreamWriter(resp.getOutputStream(), "UTF-8"))
+                {
                     response.writeJSONString(writer);
                 }
                 byteCount = ((Response) ((CompressedResponseWrapper) resp).getResponse()).getContentCount();
-            } else {
+            }
+            else
+            {
                 CountingOutputStream cos = new CountingOutputStream(resp.getOutputStream());
-                try (Writer writer = new OutputStreamWriter(cos, "UTF-8")) {
+                try (Writer writer = new OutputStreamWriter(cos, "UTF-8"))
+                {
                     response.writeJSONString(writer);
                 }
                 byteCount = cos.getCount();
             }
-            if (peer != null) {
+            if (peer != null)
+            {
                 peer.updateUploadedVolume(byteCount);
             }
-        } catch (Exception e) {
-            if (peer != null) {
+        }
+        catch (Exception e)
+        {
+            if (peer != null)
+            {
                 peer.blacklist(e);
             }
             throw e;

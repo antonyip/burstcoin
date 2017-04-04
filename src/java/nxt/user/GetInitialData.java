@@ -16,21 +16,28 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigInteger;
 
-public final class GetInitialData extends UserServlet.UserRequestHandler {
+public final class GetInitialData extends UserServlet.UserRequestHandler
+{
 
     static final GetInitialData instance = new GetInitialData();
 
-    private GetInitialData() {}
+    private GetInitialData()
+    {
+    }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req, User user) throws IOException {
+    JSONStreamAware processRequest(HttpServletRequest req, User user) throws IOException
+    {
 
         JSONArray unconfirmedTransactions = new JSONArray();
         JSONArray activePeers = new JSONArray(), knownPeers = new JSONArray(), blacklistedPeers = new JSONArray();
         JSONArray recentBlocks = new JSONArray();
 
-        try (DbIterator<? extends Transaction> transactions = Nxt.getTransactionProcessor().getAllUnconfirmedTransactions()) {
-            while (transactions.hasNext()) {
+        try (DbIterator<? extends Transaction> transactions = Nxt.getTransactionProcessor()
+                .getAllUnconfirmedTransactions())
+        {
+            while (transactions.hasNext())
+            {
                 Transaction transaction = transactions.next();
 
                 JSONObject unconfirmedTransaction = new JSONObject();
@@ -47,37 +54,46 @@ public final class GetInitialData extends UserServlet.UserRequestHandler {
             }
         }
 
-        for (Peer peer : Peers.getAllPeers()) {
+        for (Peer peer : Peers.getAllPeers())
+        {
 
-            if (peer.isBlacklisted()) {
+            if (peer.isBlacklisted())
+            {
 
                 JSONObject blacklistedPeer = new JSONObject();
                 blacklistedPeer.put("index", Users.getIndex(peer));
                 blacklistedPeer.put("address", peer.getPeerAddress());
                 blacklistedPeer.put("announcedAddress", Convert.truncate(peer.getAnnouncedAddress(), "-", 25, true));
                 blacklistedPeer.put("software", peer.getSoftware());
-                if (peer.isWellKnown()) {
+                if (peer.isWellKnown())
+                {
                     blacklistedPeer.put("wellKnown", true);
                 }
                 blacklistedPeers.add(blacklistedPeer);
 
-            } else if (peer.getState() == Peer.State.NON_CONNECTED) {
+            }
+            else if (peer.getState() == Peer.State.NON_CONNECTED)
+            {
 
                 JSONObject knownPeer = new JSONObject();
                 knownPeer.put("index", Users.getIndex(peer));
                 knownPeer.put("address", peer.getPeerAddress());
                 knownPeer.put("announcedAddress", Convert.truncate(peer.getAnnouncedAddress(), "-", 25, true));
                 knownPeer.put("software", peer.getSoftware());
-                if (peer.isWellKnown()) {
+                if (peer.isWellKnown())
+                {
                     knownPeer.put("wellKnown", true);
                 }
                 knownPeers.add(knownPeer);
 
-            } else {
+            }
+            else
+            {
 
                 JSONObject activePeer = new JSONObject();
                 activePeer.put("index", Users.getIndex(peer));
-                if (peer.getState() == Peer.State.DISCONNECTED) {
+                if (peer.getState() == Peer.State.DISCONNECTED)
+                {
                     activePeer.put("disconnected", true);
                 }
                 activePeer.put("address", peer.getPeerAddress());
@@ -86,15 +102,18 @@ public final class GetInitialData extends UserServlet.UserRequestHandler {
                 activePeer.put("downloaded", peer.getDownloadedVolume());
                 activePeer.put("uploaded", peer.getUploadedVolume());
                 activePeer.put("software", peer.getSoftware());
-                if (peer.isWellKnown()) {
+                if (peer.isWellKnown())
+                {
                     activePeer.put("wellKnown", true);
                 }
                 activePeers.add(activePeer);
             }
         }
 
-        try (DbIterator<? extends Block> lastBlocks = Nxt.getBlockchain().getBlocks(0, 59)) {
-            for (Block block : lastBlocks) {
+        try (DbIterator<? extends Block> lastBlocks = Nxt.getBlockchain().getBlocks(0, 59))
+        {
+            for (Block block : lastBlocks)
+            {
                 JSONObject recentBlock = new JSONObject();
                 recentBlock.put("index", Users.getIndex(block));
                 recentBlock.put("timestamp", block.getTimestamp());
@@ -106,8 +125,9 @@ public final class GetInitialData extends UserServlet.UserRequestHandler {
                 recentBlock.put("height", block.getHeight());
                 recentBlock.put("version", block.getVersion());
                 recentBlock.put("block", block.getStringId());
-                recentBlock.put("baseTarget", BigInteger.valueOf(block.getBaseTarget()).multiply(BigInteger.valueOf(100000))
-                        .divide(BigInteger.valueOf(Constants.INITIAL_BASE_TARGET)));
+                recentBlock.put("baseTarget",
+                        BigInteger.valueOf(block.getBaseTarget()).multiply(BigInteger.valueOf(100000))
+                                .divide(BigInteger.valueOf(Constants.INITIAL_BASE_TARGET)));
 
                 recentBlocks.add(recentBlock);
             }
@@ -116,19 +136,24 @@ public final class GetInitialData extends UserServlet.UserRequestHandler {
         JSONObject response = new JSONObject();
         response.put("response", "processInitialData");
         response.put("version", Nxt.VERSION);
-        if (unconfirmedTransactions.size() > 0) {
+        if (unconfirmedTransactions.size() > 0)
+        {
             response.put("unconfirmedTransactions", unconfirmedTransactions);
         }
-        if (activePeers.size() > 0) {
+        if (activePeers.size() > 0)
+        {
             response.put("activePeers", activePeers);
         }
-        if (knownPeers.size() > 0) {
+        if (knownPeers.size() > 0)
+        {
             response.put("knownPeers", knownPeers);
         }
-        if (blacklistedPeers.size() > 0) {
+        if (blacklistedPeers.size() > 0)
+        {
             response.put("blacklistedPeers", blacklistedPeers);
         }
-        if (recentBlocks.size() > 0) {
+        if (recentBlocks.size() > 0)
+        {
             response.put("recentBlocks", recentBlocks);
         }
 

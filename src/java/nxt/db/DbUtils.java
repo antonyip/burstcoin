@@ -4,74 +4,111 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public final class DbUtils {
+public final class DbUtils
+{
 
-    public static void close(AutoCloseable... closeables) {
-        for (AutoCloseable closeable : closeables) {
-            if (closeable != null) {
-                try {
+    public static void close(AutoCloseable... closeables)
+    {
+        for (AutoCloseable closeable : closeables)
+        {
+            if (closeable != null)
+            {
+                try
+                {
                     closeable.close();
-                } catch (Exception ignore) {}
+                }
+                catch (Exception ignore)
+                {
+                }
             }
         }
     }
 
-    public static void setBytes(PreparedStatement pstmt, int index, byte[] bytes) throws SQLException {
-        if (bytes != null) {
+    public static void setBytes(PreparedStatement pstmt, int index, byte[] bytes) throws SQLException
+    {
+        if (bytes != null)
+        {
             pstmt.setBytes(index, bytes);
-        } else {
+        }
+        else
+        {
             pstmt.setNull(index, Types.BINARY);
         }
     }
 
-    public static void setString(PreparedStatement pstmt, int index, String s) throws SQLException {
-        if (s != null) {
+    public static void setString(PreparedStatement pstmt, int index, String s) throws SQLException
+    {
+        if (s != null)
+        {
             pstmt.setString(index, s);
-        } else {
+        }
+        else
+        {
             pstmt.setNull(index, Types.VARCHAR);
         }
     }
 
-    public static void setIntZeroToNull(PreparedStatement pstmt, int index, int n) throws SQLException {
-        if (n != 0) {
+    public static void setIntZeroToNull(PreparedStatement pstmt, int index, int n) throws SQLException
+    {
+        if (n != 0)
+        {
             pstmt.setInt(index, n);
-        } else {
+        }
+        else
+        {
             pstmt.setNull(index, Types.INTEGER);
         }
     }
 
-    public static void setLongZeroToNull(PreparedStatement pstmt, int index, long l) throws SQLException {
-        if (l != 0) {
+    public static void setLongZeroToNull(PreparedStatement pstmt, int index, long l) throws SQLException
+    {
+        if (l != 0)
+        {
             pstmt.setLong(index, l);
-        } else {
+        }
+        else
+        {
             pstmt.setNull(index, Types.BIGINT);
         }
     }
 
-    public static String limitsClause(int from, int to) {
-        int limit = to >=0 && to >= from && to < Integer.MAX_VALUE ? to - from + 1 : 0;
-        if (limit > 0 && from > 0) {
+    public static String limitsClause(int from, int to)
+    {
+        int limit = to >= 0 && to >= from && to < Integer.MAX_VALUE ? to - from + 1 : 0;
+        if (limit > 0 && from > 0)
+        {
             return " LIMIT ? OFFSET ? ";
-        } else if (limit > 0) {
+        }
+        else if (limit > 0)
+        {
             return " LIMIT ? ";
-        } else if (from > 0) {
+        }
+        else if (from > 0)
+        {
             return " OFFSET ? ";
-        } else {
+        }
+        else
+        {
             return "";
         }
     }
 
-    public static int setLimits(int index, PreparedStatement pstmt, int from, int to) throws SQLException {
-        int limit = to >=0 && to >= from && to < Integer.MAX_VALUE ? to - from + 1 : 0;
-        if (limit > 0) {
+    public static int setLimits(int index, PreparedStatement pstmt, int from, int to) throws SQLException
+    {
+        int limit = to >= 0 && to >= from && to < Integer.MAX_VALUE ? to - from + 1 : 0;
+        if (limit > 0)
+        {
             pstmt.setInt(index++, limit);
         }
-        if (from > 0) {
+        if (from > 0)
+        {
             pstmt.setInt(index++, from);
         }
         return index;
     }
 
-    private DbUtils() {} // never
+    private DbUtils()
+    {
+    } // never
 
 }

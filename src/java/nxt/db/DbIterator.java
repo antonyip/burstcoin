@@ -7,9 +7,11 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public final class DbIterator<T> implements Iterator<T>, Iterable<T>, AutoCloseable {
+public final class DbIterator<T> implements Iterator<T>, Iterable<T>, AutoCloseable
+{
 
-    public interface ResultSetReader<T> {
+    public interface ResultSetReader<T>
+    {
         T get(Connection con, ResultSet rs) throws Exception;
     }
 
@@ -21,56 +23,71 @@ public final class DbIterator<T> implements Iterator<T>, Iterable<T>, AutoClosea
     private boolean hasNext;
     private boolean iterated;
 
-    public DbIterator(Connection con, PreparedStatement pstmt, ResultSetReader<T> rsReader) {
+    public DbIterator(Connection con, PreparedStatement pstmt, ResultSetReader<T> rsReader)
+    {
         this.con = con;
         this.pstmt = pstmt;
         this.rsReader = rsReader;
-        try {
+        try
+        {
             this.rs = pstmt.executeQuery();
             this.hasNext = rs.next();
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             DbUtils.close(pstmt, con);
             throw new RuntimeException(e.toString(), e);
         }
     }
 
     @Override
-    public boolean hasNext() {
-        if (! hasNext) {
+    public boolean hasNext()
+    {
+        if (!hasNext)
+        {
             DbUtils.close(rs, pstmt, con);
         }
         return hasNext;
     }
 
     @Override
-    public T next() {
-        if (! hasNext) {
+    public T next()
+    {
+        if (!hasNext)
+        {
             DbUtils.close(rs, pstmt, con);
             throw new NoSuchElementException();
         }
-        try {
+        try
+        {
             T result = rsReader.get(con, rs);
             hasNext = rs.next();
             return result;
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             DbUtils.close(rs, pstmt, con);
             throw new RuntimeException(e.toString(), e);
         }
     }
 
     @Override
-    public void remove() {
+    public void remove()
+    {
         throw new UnsupportedOperationException("Removal not suported");
     }
 
     @Override
-    public void close() {
+    public void close()
+    {
         DbUtils.close(rs, pstmt, con);
     }
 
     @Override
-    public Iterator<T> iterator() {
-        if (iterated) {
+    public Iterator<T> iterator()
+    {
+        if (iterated)
+        {
             throw new IllegalStateException("Already iterated");
         }
         iterated = true;

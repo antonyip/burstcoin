@@ -132,19 +132,7 @@ public final class Nxt
 
     public static Boolean getBooleanProperty(String name)
     {
-        String value = properties.getProperty(name);
-        if (Boolean.TRUE.toString().equals(value))
-        {
-            Logger.logMessage(name + " = \"true\"");
-            return true;
-        }
-        else if (Boolean.FALSE.toString().equals(value))
-        {
-            Logger.logMessage(name + " = \"false\"");
-            return false;
-        }
-        Logger.logMessage(name + " not defined, assuming false");
-        return false;
+        return getBooleanProperty(name, false);
     }
 
     public static Boolean getBooleanProperty(String name, boolean assume)

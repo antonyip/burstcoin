@@ -10,43 +10,59 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-final class PeerDb {
+final class PeerDb
+{
 
-    static List<String> loadPeers() {
-        try (Connection con = Db.getConnection();
-             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM peer")) {
+    static List<String> loadPeers()
+    {
+        try (Connection con = Db.getConnection(); PreparedStatement pstmt = con.prepareStatement("SELECT * FROM peer"))
+        {
             List<String> peers = new ArrayList<>();
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
+            try (ResultSet rs = pstmt.executeQuery())
+            {
+                while (rs.next())
+                {
                     peers.add(rs.getString("address"));
                 }
             }
             return peers;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw new RuntimeException(e.toString(), e);
         }
     }
 
-    static void deletePeers(Collection<String> peers) {
+    static void deletePeers(Collection<String> peers)
+    {
         try (Connection con = Db.getConnection();
-             PreparedStatement pstmt = con.prepareStatement("DELETE FROM peer WHERE address = ?")) {
-            for (String peer : peers) {
+                PreparedStatement pstmt = con.prepareStatement("DELETE FROM peer WHERE address = ?"))
+        {
+            for (String peer : peers)
+            {
                 pstmt.setString(1, peer);
                 pstmt.executeUpdate();
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw new RuntimeException(e.toString(), e);
         }
     }
 
-    static void addPeers(Collection<String> peers) {
+    static void addPeers(Collection<String> peers)
+    {
         try (Connection con = Db.getConnection();
-             PreparedStatement pstmt = con.prepareStatement("INSERT INTO peer (address) values (?)")) {
-            for (String peer : peers) {
+                PreparedStatement pstmt = con.prepareStatement("INSERT INTO peer (address) values (?)"))
+        {
+            for (String peer : peers)
+            {
                 pstmt.setString(1, peer);
                 pstmt.executeUpdate();
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw new RuntimeException(e.toString(), e);
         }
     }

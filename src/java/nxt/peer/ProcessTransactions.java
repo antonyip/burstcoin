@@ -6,21 +6,28 @@ import nxt.util.JSON;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-final class ProcessTransactions extends PeerServlet.PeerRequestHandler {
+final class ProcessTransactions extends PeerServlet.PeerRequestHandler
+{
 
     static final ProcessTransactions instance = new ProcessTransactions();
 
-    private ProcessTransactions() {}
-
+    private ProcessTransactions()
+    {
+    }
 
     @Override
-    JSONStreamAware processRequest(JSONObject request, Peer peer) {
+    JSONStreamAware processRequest(JSONObject request, Peer peer)
+    {
 
-        try {
+        try
+        {
             Nxt.getTransactionProcessor().processPeerTransactions(request);
             return JSON.emptyJSON;
-        } catch (RuntimeException | NxtException.ValidationException e) {
-            //Logger.logDebugMessage("Failed to parse peer transactions: " + request.toJSONString());
+        }
+        catch (RuntimeException | NxtException.ValidationException e)
+        {
+            // Logger.logDebugMessage("Failed to parse peer transactions: " +
+            // request.toJSONString());
             peer.blacklist(e);
             JSONObject response = new JSONObject();
             response.put("error", e.toString());
