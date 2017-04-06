@@ -188,7 +188,7 @@
       
       .navbar
       {
-        z-index:10;
+        z-index:20;
       }
       .navbar-collapse.collapse
       {
@@ -322,7 +322,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span> 
             </button>
-            <a class="navbar-brand" href="#">ant.</a>
+            <a class="navbar-brand" href="#">BURST</a>
           </div>        
           
           <div class="collapse navbar-collapse" id="myNavbar">
@@ -330,7 +330,7 @@
               <li style="margin:15px"><span><div data-toggle="collapse" data-target="#myNavbar">
               <a href="#" data-page="dashboard" data-i18n="dashboard" onclick="NRS.goToPage('dashboard',null);">Dashboard</a></div></span></li> <!-- todo -->
               <li style="margin:15px"><span>
-                        <a href="#" data-toggle="collapse" data-target="#myNavbar">
+                        <a href="#" onclick="NRS.goToPage('account',null);" data-toggle="collapse" data-target="#myNavbar">
                             <!-- <a href="#" data-toggle="modal" data-target="#send_money_modal" data-i18n="send_nxt">Send</a> -->
                             Account
                         </a>
@@ -344,7 +344,7 @@
               </div>
               </span>
               <li style="margin:15px"><span>
-              <a href="#" data-toggle="collapse" data-target="#myNavbar">Options</a>
+              <a href="#" data-toggle="collapse" data-target="#myNavbar" onclick="NRS.goToPage('option',null);">Options</a>
               </span></li>
               <li style="margin:15px"><span>
               <a href="#" data-toggle="dropdown" id="logout_button">Logout</a>
@@ -403,11 +403,23 @@
                       </div>
                     </div>
                   </div>
-                  <div class="box-footer" id="dashboard_transactions_footer" style="display: none"><button class="btn btn-primary goto-page" data-page="transactions"><i class="fa fa-caret-right"></i> <span data-i18n="view_more">View More</span></button></div>
+                  <div class="box-footer" id="dashboard_transactions_footer" style="display: none"><button class="btn btn-primary goto-page hidden" data-page="transactions"> <i class="fa fa-caret-right"></i> <span data-i18n="view_more" >View More</span></button></div>
                 </div>
               </div>
           </section>
         </div>
+        <div id="account_page" class="page">
+            <section class="content">
+            <button class="btn-primary btn disabled btn-block">Set Account Info</button>
+            <button class="btn-primary btn disabled btn-block">Set Reward Recipient</button>
+          </section>
+        </div>
+        <div id="option_page" class="page">
+            <section class="content">
+            <button class="btn-primary btn disabled btn-block">Set Theme.</button>
+            <button class="btn-primary btn disabled btn-block">Give me burst.</button>
+          </section>
+        </div>        
         <div id="crowdfunding_page" class="page">
           <section class="content">
             <div class="data-container data-loading">
@@ -831,10 +843,10 @@
                   <tr>
                     <th data-i18n="asset">Asset</th>
                     <th data-i18n="quantity">Quantity</th>
-                    <th data-i18n="total_available">Total Available</th>
-                    <th data-i18n="percentage">Percentage</th>
-                    <th data-i18n="lowest_ask">Lowest Ask</th>
-                    <th data-i18n="highest_bid">Highest Bid</th>
+                    <th hidden data-i18n="total_available">Total Available</th>
+                    <th hidden data-i18n="percentage">Percentage</th>
+                    <th hidden data-i18n="lowest_ask">Lowest Ask</th>
+                    <th hidden data-i18n="highest_bid">Highest Bid</th>
                     <th data-i18n="value_in_nxt">Value in BURST</th>
                     <th data-i18n="transfer">Transfer</th>
                   </tr>
@@ -5736,7 +5748,7 @@
     <script src="js/nrs.modals.account.js" type="text/javascript"></script>
     <script src="js/nrs.modals.accountdetails.js" type="text/javascript"></script>
     <script src="js/nrs.modals.block.js" type="text/javascript"></script>
-    <script src="js/nrs.modals.forging.js" type="text/javascript"></script>
+    <!-- <script src="js/nrs.modals.forging.js" type="text/javascript"></script> -->
     <script src="js/nrs.modals.info.js" type="text/javascript"></script>
     <script src="js/nrs.modals.token.js" type="text/javascript"></script>
     <script src="js/nrs.modals.transaction.js" type="text/javascript"></script>
