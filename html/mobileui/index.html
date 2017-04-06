@@ -198,6 +198,16 @@
       {
         display: block!important;
       }      
+      .navbar.always-open {
+        border-radius: 0;
+        }
+        .navbar.always-open .navbar-header {
+          float: none;
+        }
+        .navbar.always-open .navbar-toggle {
+          display: block;
+        }
+
     </style>
   </head>
   <body class="lockscreen fixed">
@@ -314,7 +324,7 @@
       </table>
     </div>
     <div class="container">
-    <nav class="navbar navbar-default" role="navigation">
+    <nav class="navbar navbar-default always-open" role="navigation">
       <div class="container">
           <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
